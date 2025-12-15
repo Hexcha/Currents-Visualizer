@@ -1,42 +1,41 @@
 # BİL301S Assignment 1: Generative Visualization
-## Tame Impala - Currents Audio-Reactive Simulation
+## Tame Impala - Currents: Deep Purple & Bass Flash Edition
 
-This project is a generative art assignment developed for the **Introduction to Computer Graphics (BİL301S)** course. It is a dynamic, code-based recreation and reinterpretation of the iconic album cover **Tame Impala - *Currents***.
+This project is an audio-reactive generative art application developed for the **Introduction to Computer Graphics (BİL301S)** course. It simulates the iconic aesthetic of Tame Impala's *Currents* album cover using **pure mathematical curves** and **audio frequency analysis**.
 
-### Inspiration & Concept
-The core concept involves transforming the static illusion of the original album art—a metal sphere disrupting a fluid medium—into a living, breathing, audio-reactive experience. The project uses physics-based particle systems and cubic Bézier curves to simulate fluid dynamics and speed.
+### Overview & Features
+Instead of using static images or pre-made assets, this project renders a dynamic scene in real-time:
+* **Physics-Based Intro:** A red laser approaches a metallic sphere based on vector physics.
+* **Audio-Reactive Wakes:** Upon impact, the scene explodes into hundreds of flowing lines that react to the music's bass frequencies.
+* **Custom UI:** Includes a custom-styled Play/Pause button, a seek slider, and a time display.
 
 ### Technical Implementation
 
-The project is built using **p5.js** and implements several key graphics algorithms:
+The project is built with **p5.js** but implements core graphics algorithms manually:
 
-#### 1. Cubic Bézier Flow Field
-* The background consists of **350+ individual Bézier curves**.
-* Control points ($P_1, P_2$) are dynamically modulated using **Perlin Noise** to create organic turbulence.
-* The curves react to audio frequencies, expanding and vibrating with the music.
+#### 1. Manual Cubic Bézier Implementation
+Unlike standard drawing functions, this project calculates Bézier curves mathematically to demonstrate the underlying graphics logic.
 
-#### 2. Continuous Contour Flow (Motion Illusion)
-To create the illusion that the stationary sphere is moving at high velocity:
-* A custom `ShockwaveParticle` system was designed.
-* Particles spawn continuously from the sphere's front contour.
-* **Vector Math:** The velocity vectors are calculated to be tangent to the sphere's surface, flowing backwards into the exact trajectory of the Bézier curves. This creates a seamless "aerodynamic drag" effect.
 
-#### 3. Audio Reactivity (FFT Analysis)
-* Utilizes `p5.FFT` to analyze the audio spectrum.
-* Specific focus on **Bass** and **LowMid** frequencies to trigger visual events.
-* **Reaction:** On strong beats, the color palette shifts from deep indigo/purple to bright magenta/white, and the flow speed accelerates (Turbo Mode).
+* **The Formula:** The code implements the explicit cubic formula:
+    $$B(t) = (1-t)^3 P_0 + 3(1-t)^2 t P_1 + 3(1-t) t^2 P_2 + t^3 P_3$$
+* **Implementation:** The `cubicBezierPoint()` and `drawCubicBezier()` functions manually sample points along the curve ($t: 0 \to 1$) to render the "Wake" strands.
+* **Dynamic Control Points:** $P_1$ and $P_2$ are modulated by **Perlin Noise** and Audio Amplitude to create organic turbulence.
 
-### Simulation States
-The visualization follows a cinematic sequence:
-1.  **Approach:** A red laser approaches the center from a random angle.
-2.  **Impact:** The laser strikes, the sphere materializes.
-3.  **Flow:** The full energy wake and particle systems are engaged.
+#### 2. Audio Analysis (FFT) & Reactivity
+* **FFT Analysis:** Uses `p5.FFT` to isolate **Bass** and **LowMid** frequencies.
+* **Bass Flash:** When a strong beat is detected, the color palette shifts from Deep Indigo to Neon Magenta, and the wireframe thickness increases.
+* **Turbo Mode:** The `wakeTimer` accelerates based on energy levels, making the animation speed sync with the rhythm.
 
-### How to Run
-1.  Clone this repository.
-2.  Open `index.html` in your browser (or use a local server like Live Server).
-3.  Click the file input button to upload an `.mp3` or `.wav` file.
-4.  Enjoy the visualization.
+#### 3. State Machine & Camera
+The visualization follows a directed graph:
+* **State 0 (Approach):** Vector subtraction calculates the laser's path to the center (0,0). The camera creates a "Dolly Zoom" effect towards the impact point.
+* **State 1 (Flow):** Triggered by collision detection (`redHead.mag() < sphereR`). The camera pulls back to reveal the full Bézier flow field.
+
+### 🎮 Controls
+* **Load Music:** Use the file input to upload any `.mp3` or `.wav`.
+* **Play/Pause:** Toggle playback with the styled neon button.
+* **Seek:** Use the slider to jump to any part of the song.
 
 ---
-*Developed by Taner Ayranci*
+*Developed for BİL301S - Introduction to Computer Graphics*
